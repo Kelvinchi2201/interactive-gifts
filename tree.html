@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Corazones Mágicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fce7f3; /* bg-pink-50 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Georgia, Cambria, "Times New Roman", Times, serif; /* font-serif */
+            padding: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Contenedor de la tarjeta */
+        #card {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 448px;
+            width: 100%;
+            text-align: center;
+            border: 2px solid #fbcfe8; /* border-pink-200 */
+            z-index: 10;
+        }
+
+        /* Contenedor del árbol interactivo */
+        #tree-container {
+            position: relative;
+            height: 288px; /* h-72 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Corazón principal interactivo */
+        #main-heart {
+            width: 96px;
+            height: 96px;
+            color: #ec4899; /* text-pink-500 */
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #main-heart:hover {
+            transform: scale(1.1);
+        }
+
+        #tree-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animación para dibujar las ramas */
+        .tree-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        .tree-active .tree-path {
+            animation: draw 1.5s ease-in-out forwards;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* Elementos ocultos por defecto */
+        .hidden {
+            display: none !important;
+        }
+
+        .opacity-0 {
+            opacity: 0;
+        }
+
+        /* Transiciones para las hojas y los mensajes */
+        .leaves, #messages {
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+
+        /* Bloque de mensajes */
+        #messages {
+            margin-top: 24px;
+        }
+
+        #messages h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ec4899; /* text-pink-500 */
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+
+        #messages p {
+            color: #4b5563; /* text-gray-600 */
+            font-style: italic;
+            line-height: 1.625;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="card">
+        <div id="tree-container">
+            
+            <div id="main-heart">
+                <svg viewBox="0 0 32 32" fill="currentColor">
+                    <path d="M16,28.221 C16,28.221 3,19.98 3,11.517 C3,6.862 6.83,3 11.52,3 C14.341,3 16,5.32 16,5.32 C16,5.32 17.659,3 20.48,3 C25.17,3 29,6.862 29,11.517 C29,19.98 16,28.221 16,28.221 Z"/>
+                </svg>
+            </div>
+
+            <svg id="tree-svg" class="hidden" viewBox="0 0 200 200">
+                <path d="M100,200 Q100,140 100,100" stroke="#4a3728" stroke-width="8" fill="none" class="tree-path" />
+                <path d="M100,140 Q70,110 50,100" stroke="#4a3728" stroke-width="4" fill="none" class="tree-path" />
+                <path d="M100,130 Q130,100 150,90" stroke="#4a3728" stroke-width="4" fill="none" class="tree-path" />
+                
+                <foreignObject x="30" y="70" width="40" height="40" class="leaves opacity-0">
+                   <svg viewBox="0 0 32 32" style="width:100%; height:100%; color:#ec4899;" fill="currentColor"><path d="M16,28.221 C16,28.221 3,19.98 3,11.517 C3,6.862 6.83,3 11.52,3 C14.341,3 16,5.32 16,5.32 C16,5.32 17.659,3 20.48,3 C25.17,3 29,6.862 29,11.517 C29,19.98 16,28.221 16,28.221 Z"/></svg>
+                </foreignObject>
+                <foreignObject x="130" y="60" width="40" height="40" class="leaves opacity-0">
+                   <svg viewBox="0 0 32 32" style="width:100%; height:100%; color:#ec4899;" fill="currentColor"><path d="M16,28.221 C16,28.221 3,19.98 3,11.517 C3,6.862 6.83,3 11.52,3 C14.341,3 16,5.32 16,5.32 C16,5.32 17.659,3 20.48,3 C25.17,3 29,6.862 29,11.517 C29,19.98 16,28.221 16,28.221 Z"/></svg>
+                </foreignObject>
+                <foreignObject x="75" y="60" width="50" height="50" class="leaves opacity-0">
+                   <svg viewBox="0 0 32 32" style="width:100%; height:100%; color:#ec4899;" fill="currentColor"><path d="M16,28.221 C16,28.221 3,19.98 3,11.517 C3,6.862 6.83,3 11.52,3 C14.341,3 16,5.32 16,5.32 C16,5.32 17.659,3 20.48,3 C25.17,3 29,6.862 29,11.517 C29,19.98 16,28.221 16,28.221 Z"/></svg>
+                </foreignObject>
+            </svg>
+        </div>
+
+        <div id="messages" class="hidden opacity-0">
+            <h2>"Para ti"</h2>
+            <p>Me la paso genial contigo, me río bastante contigo y de ti más que todo.</p>
+            <p>te quiero misi :P</p>
+        </div>
+    </div>
+
+    <script>
+        const mainHeart = document.getElementById('main-heart');
+        const treeSvg = document.getElementById('tree-svg');
+        const leaves = document.querySelectorAll('.leaves');
+        const messages = document.getElementById('messages');
+
+        mainHeart?.addEventListener('click', () => {
+            // 1. Ocultar el corazón inicial estático y activar el árbol SVG
+            mainHeart.classList.add('hidden');
+            treeSvg?.classList.remove('hidden');
+            
+            // Forzar reflow mínimo para que la transición CSS de dasharray funcione limpiamente
+            setTimeout(() => {
+                treeSvg?.classList.add('tree-active');
+            }, 50);
+            
+            // 2. Revelar de forma asíncrona los mensajes
+            messages?.classList.remove('hidden');
+            
+            // 3. Mostrar las hojas de corazones y el texto al finalizar el crecimiento de las ramas (1.5s)
+            setTimeout(() => {
+                leaves.forEach(leaf => leaf.classList.remove('opacity-0'));
+                messages?.classList.remove('opacity-0');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
