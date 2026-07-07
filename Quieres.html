@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Animado</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffa8a8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Contenedor principal que centra el sobre */
+        .envlope-wrapper {
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* El sobre recupera sus dimensiones fijas perfectas */
+        #envelope {
+            position: relative;
+            width: 280px;
+            height: 180px;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            background-color: #ff234c;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        /* Forzamos a que las capas de los triángulos midan 0x0 obligatoriamente */
+        .front {
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: 3;
+        }
+
+        /* La solapa de arriba */
+        .flap {
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 82px solid transparent;
+            border-top: 98px solid #ff234c;
+            transform-origin: top;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+        }
+
+        /* El bolsillo de abajo */
+        .pocket {
+            border-left: 140px solid #fd768f;
+            border-right: 140px solid #fd768f;
+            border-bottom: 90px solid #ff4d6d;
+            border-top: 90px solid transparent;
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* La carta interna */
+        .letter {
+            position: absolute;
+            background-color: #fff;
+            width: 250px;
+            height: 150px;
+            top: 15px;
+            left: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 26px rgba(0, 0, 0, 0.12);
+            z-index: 2;
+            padding: 20px 15px;
+            transition: transform 0.4s ease, z-index 0.4s;
+        }
+
+        .letter p {
+            margin: 5px 0;
+            text-align: center;
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* --- ANIMACIONES DE APERTURA --- */
+        .open .flap {
+            transform: rotateX(180deg);
+            transition: transform 0.4s ease, z-index 0.6s;
+            z-index: 1;
+        }
+
+        .close .flap {
+            transform: rotateX(0deg);
+            transition: transform 0.4s 0.6s ease, z-index 1s;
+            z-index: 5;
+        }
+
+        .close .letter {
+            transform: translateY(0px);
+            transition: transform 0.4s ease, z-index 1s;
+            z-index: 1;
+        }
+
+        .open .letter {
+            transform: translateY(-80px);
+            transition: transform 0.4s 0.6s ease, z-index 0.6s;
+            z-index: 2;
+        }
+
+        /* --- SISTEMA DE CORAZONES CORREGIDO --- */
+        .hearts {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 4; 
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: 0;
+            opacity: 0;
+        }
+
+        /* Estructura perfecta para las curvas de cada corazón */
+        .heart:before,
+        .heart:after {
+            position: absolute;
+            content: "";
+            left: 15px;
+            top: 0;
+            width: 15px;
+            height: 24px;
+            background: #ff395d;
+            border-radius: 15px 15px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* Animación para que floten hacia arriba y se desvanezcan */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(-20px) scale(1.2);
+            }
+            100% {
+                transform: translateY(-160px) rotate(20deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        /* Activación y desfase de los corazones al abrir */
+        .open .heart.a1 {
+            left: 20%;
+            animation: floatUp 2s ease-in-out infinite;
+        }
+
+        .open .heart.a2 {
+            left: 50%;
+            animation: floatUp 2.5s ease-in-out 0.4s infinite;
+        }
+
+        .open .heart.a3 {
+            left: 80%;
+            animation: floatUp 2.2s ease-in-out 0.8s infinite;
+        }
+
+        /* --- BOTONES DE CONTROL --- */
+        .reset {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .reset button {
+            font-weight: 800;
+            background-color: transparent;
+            border: solid 2px #b20000;
+            border-radius: 4px;
+            color: #b20000;
+            display: inline-block;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reset button:hover {
+            background-color: #b20000;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="envlope-wrapper">
+        <div id="envelope" class="close">
+            <div class="front flap"></div>
+            <div class="front pocket"></div>
+            <div class="letter">
+              <h2>¿Quieres salir conmigo?</h2>
+            </div>
+            <div class="hearts">
+                <div class="heart a1"></div>
+                <div class="heart a2"></div>
+                <div class="heart a3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reset">
+        <button id="open">Abrir</button>
+        <button id="reset">Cerrar</button>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script>
+        $(document).ready(function() {
+            var envelope = $('#envelope');
+            var btn_open = $("#open");
+            var btn_reset = $("#reset");
+
+            envelope.click(function() { open(); });
+            btn_open.click(function() { open(); });
+            btn_reset.click(function() { close(); });
+
+            function open() {
+                envelope.addClass("open").removeClass("close");
+            }
+            function close() {
+                envelope.addClass("close").removeClass("open");
+            }
+        });
+    </script>
+
+</body>
+</html>
